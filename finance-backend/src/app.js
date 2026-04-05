@@ -5,6 +5,7 @@ import authRouter from './routes/auth.route.js'
 import userRouter from './routes/users.route.js'
 import recordsRouter from './routes/records.route.js'
 import dashboardRouter from './routes/dashboard.route.js'
+import errorHandler from './middleware/errorHandler.js'
 import cookieParser from 'cookie-parser'
 
 const app = express()
@@ -21,5 +22,7 @@ app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/records', recordsRouter)
 app.use('/api/v1/dashboard', dashboardRouter)
+
+app.use(errorHandler)
 
 export default app
