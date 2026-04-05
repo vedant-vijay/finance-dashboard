@@ -7,22 +7,25 @@ export async function getRecordById(id){
     return res.rows[0]
 }
 
-export async function createRecord(userId, amount, type, category, date, notes){
-    const query = 'insert into financial_records(user_id, amount, type, category, date, notes) values($1, $2, $3, $4, $5, $6) returning *'
+export async function createRecord(userId, amount, type, category, date, notes) {
+    const query = `
+        INSERT INTO financial_records(user_id, amount, type, category, date, notes) 
+        VALUES($1, $2, $3, $4, $5, $6) 
+        RETURNING id, user_id, amount, type, date::text as date, category, notes, created_at, updated_at
+    `
     const res = await pool.query(query, [userId, amount, type, category, date, notes])
-
     return res.rows[0]
 }
 
 export async function updateRecord(id, fields) {
     const keys = Object.keys(fields)
+    if (keys.length === 0) throw new Error('No fields to update')
     const values = Object.values(fields)
     const setClause = keys.map((key, i) => `"${key}" = $${i + 1}`).join(', ')
     const res = await pool.query(
-        `UPDATE financial_records 
-        SET ${setClause}, updated_at = current_timestamp 
+        `UPDATE financial_records SET ${setClause}, updated_at = current_timestamp 
         WHERE id = $${keys.length + 1} AND deleted_at IS NULL 
-        RETURNING *`,
+        RETURNING id, user_id, amount, type, date::text as date, category, notes, created_at, updated_at`,
         [...values, id]
     )
     return res.rows[0]

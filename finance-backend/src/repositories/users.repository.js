@@ -20,6 +20,7 @@ export async function createUser(name, email, hashedPassword, role) {
 
 export async function updateUser(id, fields) {
     const keys = Object.keys(fields)
+    if (keys.length === 0) throw new Error('No fields to update')
     const values = Object.values(fields)
     const setClause = keys.map((key, i) => `"${key}" = $${i + 1}`).join(', ')
     const res = await pool.query(
