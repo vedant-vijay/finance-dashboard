@@ -6,6 +6,7 @@ import userRouter from './routes/users.route.js'
 import recordsRouter from './routes/records.route.js'
 import dashboardRouter from './routes/dashboard.route.js'
 import errorHandler from './middleware/errorHandler.js'
+import { globalLimiter } from './middleware/rateLimiter.js'
 import cookieParser from 'cookie-parser'
 
 const app = express()
@@ -17,6 +18,7 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 app.use(helmet())
+app.use(globalLimiter)
 
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/users', userRouter)
